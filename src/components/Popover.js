@@ -1,78 +1,126 @@
 export default class Popover {
-  constructor(element) {
+  constructor(element, options = {}) {
     this.element = element;
+    this.title = options.title || 'Popover title';
+    this.content = options.content || 'And here\'s some amazing content. It\'s very engaging. Right?';
     this.popover = null;
     this.isVisible = false;
+    
+    this.handleElementClick = this.handleElementClick.bind(this);
+    this.handleDocumentClick = this.handleDocumentClick.bind(this);
+    
     this.init();
   }
-
+  
   init() {
     // Create popover element
     this.popover = document.createElement('div');
     this.popover.className = 'popover';
     this.popover.style.display = 'none';
+    this.popover.style.position = 'absolute';
     
-    // Create arrow
+    // Create arrow (будет указывать ВНИЗ на кнопку)
     const arrow = document.createElement('div');
-    arrow.className = 'arrow';
+    arrow.className = 'popover-arrow';
     
-    // Create header
-    const header = document.createElement('div');
-    header.className = 'popover-header';
-    header.textContent = 'Popover title';
+    // Create popover header
+    const popoverHeader = document.createElement('div');
+    popoverHeader.className = 'popover-header';
+    popoverHeader.textContent = this.title;
     
-    // Create body
-    const body = document.createElement('div');
-    body.className = 'popover-body';
-    body.textContent = 'And here\'s some amazing content. It\'s very engaging. Right?';
+    // Create popover body
+    const popoverBody = document.createElement('div');
+    popoverBody.className = 'popover-body';
+    popoverBody.innerHTML = this.content;
     
-    // Assemble
-    this.popover.appendChild(arrow);
-    this.popover.appendChild(header);
-    this.popover.appendChild(body);
+    // Append elements
+    this.popover.append(arrow, popoverHeader, popoverBody);
     
-    // Add to DOM
-    document.body.appendChild(this.popover);
+    // Add popover to body
+    document.body.append(this.popover);
     
-    // Add event listeners
-    this.element.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.toggle();
-    });
+    // Add click event
+    this.element.addEventListener('click', this.handleElementClick);
     
-    document.addEventListener('click', (e) => {
-      if (this.isVisible && 
-          !this.popover.contains(e.target) && 
-          e.target !== this.element) {
-        this.hide();
-      }
-    });
+    // Close popover when clicking outside
+    document.addEventListener('click', this.handleDocumentClick);
   }
-
+  
+  handleElementClick(e) {
+    e.stopPropagation();
+    this.toggle();
+  }
+  
+  handleDocumentClick(e) {
+    if (this.isVisible && 
+        !this.popover.contains(e.target) && 
+        e.target !== this.element &&
+        !this.element.contains(e.target)) {
+      this.hide();
+    }
+  }
+  
   show() {
     if (this.isVisible) return;
     
+    // Calculate position - ставим НАД кнопкой
     const rect = this.element.getBoundingClientRect();
-    const popoverWidth = 276;
+    const popoverWidth = this.popover.offsetWidth || 276;
+    const popoverHeight = this.popover.offsetHeight || 100;
     
-    // Position above button, centered
-    const top = window.scrollY + rect.top - this.popover.offsetHeight - 10;
-    const left = window.scrollX + rect.left + (rect.width / 2) - (popoverWidth / 2);
+    // Position popover ABOVE the element (над кнопкой)
+    const top = rect.top + window.scrollY - popoverHeight - 10; // 10px отступ сверху
+    const left = rect.left + window.scrollX + (rect.width / 2) - (popoverWidth / 2);
     
-    this.popover.style.width = `${popoverWidth}px`;
-    this.popover.style.top = `${top}px`;
-    this.popover.style.left = `${left}px`;
+    // Не даем выйти за границы экрана
+    const adjustedLeft = Math.max(10, Math.min(
+      left,
+      window.innerWidth - popoverWidth - 10
+    ));
+    
+    this.popover.style.top = `${Math.max(10, top)}px`;
+    this.popover.style.left = `${adjustedLeft}px`;
     this.popover.style.display = 'block';
+    
+    // Позиционируем стрелку ВНИЗУ popover (чтобы указывала на кнопку)
+    const arrow = this.popover.querySelector('.popover-arrow');
+    const arrowLeft = (rect.left + window.scrollX + (rect.width / 2)) - adjustedLeft - 8;
+    arrow.style.left = `${arrowLeft}px`;
+    arrow.style.top = 'auto';
+    arrow.style.bottom = '-10px'; // Располагаем стрелку ВНИЗУ popover
+    
     this.isVisible = true;
   }
-
+  
   hide() {
     if (!this.isVisible) return;
+    
     this.popover.style.display = 'none';
     this.isVisible = false;
   }
-
+  
   toggle() {
     this.isVisible ? this.hide() : this.show();
+  }
+  
+  destroy() {
+    this.hide();
+    
+    if (this.element) {
+      this.element.removeEventListener('click', this.handleElementClick);
+    }
+    
+    try {
+      document.removeEventListener('click', this.handleDocumentClick);
+    } catch  {
+      // Игнорируем ошибку
+    }
+    
+    if (this.popover && this.popover.parentNode) {
+      this.popover.remove();
+    }
+    
+    this.element = null;
+    this.popover = null;
   }
 }

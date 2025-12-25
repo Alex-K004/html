@@ -7,15 +7,12 @@
     "build": "webpack --mode production",
     "test": "jest",
     "lint": "eslint src/**/*.js tests/**/*.js",
-    "lint:fix": "eslint src/**/*.js tests/**/*.js --fix",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "lint:fix": "eslint src/**/*.js tests/**/*.js --fix"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.5",
     "css-loader": "^6.8.1",
     "eslint": "^9.39.2",
-    "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.5.1",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
