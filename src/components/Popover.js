@@ -82,7 +82,7 @@ export default class Popover {
     this.popover.style.left = `${adjustedLeft}px`;
     this.popover.style.display = 'block';
     
-    // Позиционируем стрелку ВНИЗУ popover (чтобы указывала на кнопку)
+    // Позиционируем стрелку ВНИЗУ popover 
     const arrow = this.popover.querySelector('.popover-arrow');
     const arrowLeft = (rect.left + window.scrollX + (rect.width / 2)) - adjustedLeft - 8;
     arrow.style.left = `${arrowLeft}px`;
