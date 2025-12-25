@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Bootstrap-like popover in pure JavaScript",
   "scripts": {
-    "start": "webpack serve --open",
+    "start": "webpack serve --mode development",
     "build": "webpack --mode production",
     "test": "jest",
     "lint": "eslint src/**/*.js tests/**/*.js",

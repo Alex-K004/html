@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
         directory: path.join(__dirname, 'dist'),
       },
       compress: true,
-      port: 9000,
+      port: 9009,
       open: true,
       hot: true,
     },
