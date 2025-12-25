@@ -1,1 +1,1 @@
-![CI](https://github.com/Alex-K004/testing/actions/workflows/deploy.yml/badge.svg) https://alex-k004.github.io/testing/
+![CI](https://github.com/Alex-K004/html/actions/workflows/deploy.yml/badge.svg) 
