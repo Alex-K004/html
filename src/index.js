@@ -1,4 +1,4 @@
-import './styles/main.css';
+import './styles/styles.css';
 import Popover from './components/Popover';
 
 document.addEventListener('DOMContentLoaded', () => {
